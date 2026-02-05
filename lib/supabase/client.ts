@@ -12,6 +12,25 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: {
+      getItem: (key) => {
+        if (typeof window !== 'undefined') {
+          return window.localStorage.getItem(key);
+        }
+        return null;
+      },
+      setItem: (key, value) => {
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(key, value);
+        }
+      },
+      removeItem: (key) => {
+        if (typeof window !== 'undefined') {
+          window.localStorage.removeItem(key);
+        }
+      },
+    },
   },
 });
 
@@ -94,11 +113,40 @@ export interface Database {
           title: string | null;
           message: string | null;
           action_url: string | null;
+          data: any | null;
           read: boolean;
           sent: boolean;
           created_at: string;
           read_at: string | null;
         };
+        Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['notifications']['Insert']>;
+      };
+      activity_logs: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          action: string;
+          event_id: string | null;
+          metadata: any | null;
+          timestamp: string;
+        };
+        Insert: Omit<Database['public']['Tables']['activity_logs']['Row'], 'id' | 'timestamp'>;
+        Update: Partial<Database['public']['Tables']['activity_logs']['Insert']>;
+      };
+      invitations: {
+        Row: {
+          id: string;
+          inviter_id: string | null;
+          invite_code: string;
+          email: string | null;
+          accepted_by: string | null;
+          accepted_at: string | null;
+          expires_at: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['invitations']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['invitations']['Insert']>;
       };
     };
   };

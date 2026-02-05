@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "@/lib/supabase/suppress-auth-errors";
 import { UserProvider } from "@/contexts/UserContext";
 import { Toaster } from "react-hot-toast";
 import { BackgroundDecorations } from "@/components/shared/BackgroundDecorations";
